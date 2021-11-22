@@ -1,9 +1,12 @@
+package kdg815733.aws;
+
 import java.util.Scanner;
 
 public class DVRM 
 {
     public static void main(String[] args) throws Exception
     {
+        MyAWSKit aws = new MyAWSKit();
 
         Scanner menu = new Scanner(System.in);
         Scanner id_string = new Scanner(System.in);
@@ -29,10 +32,11 @@ public class DVRM
             System.out.println("------------------------------------------------------------");
 
             System.out.print("Enter an integer: ");
-            
+            number = menu.nextInt();
             switch(number)
             {
                 case 1:
+                    aws.listInstances();
                     break;
                 case 2:
                     break;
