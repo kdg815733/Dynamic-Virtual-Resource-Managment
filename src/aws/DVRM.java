@@ -1,4 +1,4 @@
-package kdg815733.aws;
+package aws;
 
 import java.util.Scanner;
 
@@ -53,11 +53,14 @@ public class DVRM
                 case 8:
                     break;
                 case 99:
+                    
                     break;
                 default:
                     break;
             }
+            break;
             
         }
     }
 }
+
