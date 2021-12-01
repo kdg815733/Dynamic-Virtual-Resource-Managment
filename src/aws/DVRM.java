@@ -23,6 +23,7 @@ public class DVRM
             System.out.println(" ");
             System.out.println(" Cloud Computing, Computer Science Department ");
             System.out.println(" at Chungbuk National University ");
+            System.out.println(" Doek Gyu Kang 2017068005");
             System.out.println("------------------------------------------------------------");
             System.out.println(" 1. list instance 2. available zones ");
             System.out.println(" 3. start instance 4. available regions ");
@@ -39,26 +40,32 @@ public class DVRM
                     aws.listInstances();
                     break;
                 case 2:
+                    aws.availableZones();
                     break;
                 case 3:
+                    aws.startInstance();
                     break;
                 case 4:
+                    aws.availableRegions();
                     break;
                 case 5:
+                    aws.stoptInstance();
                     break;
                 case 6:
+                    aws.createInstance();
                     break;
                 case 7:
+                    aws.rebootInstance();
                     break;
                 case 8:
+                    aws.listImages();
                     break;
                 case 99:
-                    
-                    break;
+                    return;
                 default:
+                    System.out.println("\n잘못된 입력입니다.");
                     break;
             }
-            break;
             
         }
     }

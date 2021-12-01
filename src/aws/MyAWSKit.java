@@ -40,7 +40,7 @@ public class MyAWSKit
             .withRegion("us-east-2") /* check the region at AWS console */
             .build();
         }
-        public static void listInstances()
+        public void listInstances()
         {
             System.out.println("Listing instances....");
             boolean done = false;
@@ -74,6 +74,42 @@ public class MyAWSKit
                     done = true;
                 }
             }
-        }   
+        }
+        
+        public void startInstance()
+        {
+
+        }
+
+        public void stoptInstance()
+        {
+            
+        }
+
+        public void rebootInstance()
+        {
+            
+        }
+
+        public void availableZones()
+        {
+
+        }
+
+        public void createInstance()
+        {
+            
+        }
+
+        public void availableRegions()
+        {
+            
+        }
+
+        public void listImages()
+        {
+
+        }
+
 
     }
