@@ -43,24 +43,26 @@ public class DVRM
                     aws.availableZones();
                     break;
                 case 3:
-                    aws.startInstance();
+                    aws.startInstance(id_string.nextLine());
                     break;
                 case 4:
                     aws.availableRegions();
                     break;
                 case 5:
-                    aws.stoptInstance();
+                    aws.stoptInstance(id_string.nextLine());
                     break;
                 case 6:
-                    aws.createInstance();
+                    aws.createInstance(id_string.nextLine());
                     break;
                 case 7:
-                    aws.rebootInstance();
+                    aws.rebootInstance(id_string.nextLine());
                     break;
                 case 8:
                     aws.listImages();
                     break;
                 case 99:
+                    menu.close();
+                    id_string.close();
                     return;
                 default:
                     System.out.println("\n잘못된 입력입니다.");
