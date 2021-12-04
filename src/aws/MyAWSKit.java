@@ -1,5 +1,6 @@
 package aws;
-
+import com.amazonaws.services.ec2.model.DescribeImagesRequest;
+import com.amazonaws.services.ec2.model.DescribeImagesResult;
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2ClientBuilder;
 import com.amazonaws.services.ec2.model.InstanceType;
@@ -7,8 +8,8 @@ import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
-import com.amazonaws.services.ec2.model.Tag;
 import com.amazonaws.services.ec2.model.DescribeRegionsResult;
+import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.Region;
 import com.amazonaws.services.ec2.model.AvailabilityZone;
 import com.amazonaws.services.ec2.model.DescribeAvailabilityZonesResult;
@@ -116,18 +117,21 @@ public class MyAWSKit
 
         public void availableZones()
         {
+            int count = 0;
             DescribeAvailabilityZonesResult zones_response = ec2.describeAvailabilityZones();
         
             for(AvailabilityZone zone : zones_response.getAvailabilityZones()) 
             {
                 System.out.printf(
-                    "Found availability zone %s " +
-                    "with status %s " +
-                    "in region %s",
-                    zone.getZoneName(),
-                    zone.getState(),
-                    zone.getRegionName());
+                    "[id] %s, "+
+                    "[region]\t%s, "+
+                    "[zone]\t%s\n",
+                    zone.getZoneId(),
+                    zone.getRegionName(),
+                    zone.getZoneName());
+                count++;
             }
+            System.out.printf("You have access to %d Availability Zones.\n",count);
         }
 
         public void createInstance(String imageId)
@@ -146,13 +150,13 @@ public class MyAWSKit
 
         public void availableRegions()
         {
+            System.out.println("Available regions ....");
             DescribeRegionsResult regions_response = ec2.describeRegions();
-
             for(Region region : regions_response.getRegions()) 
             {
                 System.out.printf(
-                    "Found region %s " +
-                    "with endpoint %s",
+                    "[region] %15s, " +
+                    "[endpoint] %s \n",
                     region.getRegionName(),
                     region.getEndpoint());
             }
@@ -160,8 +164,21 @@ public class MyAWSKit
 
         public void listImages()
         {
+            System.out.println("Listing images ....");
+            DescribeImagesRequest request = new DescribeImagesRequest()
+                .withOwners("self");
+            DescribeImagesResult response = ec2.describeImages(request);
+
+            for(Image image : response.getImages())
+            {
+                System.out.printf(
+                    "[ImageID] %s, "+
+                    "[Name] %s, "+
+                    "[Owner] %s\n",
+                    image.getImageId(),
+                    image.getName(),
+                    image.getOwnerId());
+            }
 
         }
-
-
     }

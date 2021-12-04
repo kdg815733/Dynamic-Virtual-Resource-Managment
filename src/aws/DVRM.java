@@ -43,18 +43,22 @@ public class DVRM
                     aws.availableZones();
                     break;
                 case 3:
+                    System.out.print("Enter instance id: ");
                     aws.startInstance(id_string.nextLine());
                     break;
                 case 4:
                     aws.availableRegions();
                     break;
                 case 5:
+                    System.out.print("Enter instance id: ");
                     aws.stoptInstance(id_string.nextLine());
                     break;
                 case 6:
+                    System.out.print("Enter ami id: ");
                     aws.createInstance(id_string.nextLine());
                     break;
                 case 7:
+                    System.out.print("Enter instance id: ");
                     aws.rebootInstance(id_string.nextLine());
                     break;
                 case 8:
