@@ -19,6 +19,11 @@ import com.amazonaws.services.ec2.model.RebootInstancesResult;
 import com.amazonaws.services.ec2.model.DescribeInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeInstancesResult;
 import com.amazonaws.services.ec2.model.Instance;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.ec2.model.Reservation;
@@ -207,14 +212,49 @@ public class MyAWSKit
             dimensions.withKey(Dimension.SERVICE);
             dimensions.withValues("EC2 - Other");
             expression.withDimensions(dimensions);
+            Date date = new Date();
+            Date pdate = new Date(date.getTime()-(14*1000*60*60*24));
+            SimpleDateFormat sdate = new SimpleDateFormat("yyyy-MM-dd",Locale.KOREA);
+            String today = sdate.format(date);
+            String weekBefore = sdate.format(pdate);
             GetCostAndUsageRequest request = new GetCostAndUsageRequest()
-                .withTimePeriod(new DateInterval().withStart("2021-11-01").withEnd("2021-12-05"))
-                .withGranularity(Granularity.MONTHLY)
+                .withTimePeriod(new DateInterval().withStart(weekBefore).withEnd(today))
+                .withGranularity(Granularity.DAILY)
                 .withMetrics("BLENDED_COST")
                 .withFilter(expression);
 
-            GetCostAndUsageResult result = ce.getCostAndUsage(request); 
-            System.out.println(result);
+                try 
+                {
+                    GetCostAndUsageResult result = ce.getCostAndUsage(request);
+                    String target1 = "Start: ";
+                    String target2 = ",End:";
+                    String target3 = "Amount: ";
+                    String target4 = ",Unit: USD";
+
+                    for(int i = 0; i < result.getResultsByTime().size();i++)
+                    {
+                        String temp = result.getResultsByTime().get(i).toString();
+                        int target1_index = temp.indexOf(target1);
+                        int target2_index = temp.indexOf(target2);
+                        int target3_index = temp.indexOf(target3);
+                        int target4_index = temp.indexOf(target4);
+                        String strDate = temp.substring(target1_index+7, target2_index);
+                        String strCost = temp.substring(target3_index+8, target4_index);
+                        System.out.printf(
+                            "[Date] %s "+
+                            "[Cost] %13s USD\n",
+                            strDate,
+                            strCost);
+                    }
+                } catch (Exception e) 
+                {
+                throw new AmazonClientException(
+                    "No authority about Cost explorer\n " +
+                    "If you never run cost explorer, please sign-in aws and start cost explorer ",
+                    e);
+                }
+            
+            
         }
 
         public void monitorInstances(String instanceId)
