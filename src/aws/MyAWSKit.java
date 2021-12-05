@@ -23,6 +23,7 @@ import com.amazonaws.services.ec2.model.Instance;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -40,6 +41,8 @@ import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
 import com.amazonaws.services.costexplorer.AWSCostExplorer;
 import com.amazonaws.services.costexplorer.AWSCostExplorerClientBuilder;
 import com.amazonaws.auth.BasicSessionCredentials;
+import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
+import com.amazonaws.services.ec2.model.TerminateInstancesResult;
 
 
 public class MyAWSKit 
@@ -119,7 +122,7 @@ public class MyAWSKit
             StartInstancesRequest request = new StartInstancesRequest()
                 .withInstanceIds(instanceId);
 
-            ec2.startInstances(request);   
+            ec2.startInstances(request);    
         }
 
         public void stoptInstance(String instanceId)
@@ -136,6 +139,14 @@ public class MyAWSKit
                 .withInstanceIds(instanceId);
 
             ec2.rebootInstances(request);
+        }
+
+        public void terminateInstance(String instanceId)
+        {
+            TerminateInstancesRequest request = new TerminateInstancesRequest()
+                .withInstanceIds(instanceId);
+
+            ec2.terminateInstances(request);    
         }
 
         public void availableZones()
@@ -215,6 +226,7 @@ public class MyAWSKit
             Date date = new Date();
             Date pdate = new Date(date.getTime()-(14*1000*60*60*24));
             SimpleDateFormat sdate = new SimpleDateFormat("yyyy-MM-dd",Locale.KOREA);
+            sdate.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
             String today = sdate.format(date);
             String weekBefore = sdate.format(pdate);
             GetCostAndUsageRequest request = new GetCostAndUsageRequest()
