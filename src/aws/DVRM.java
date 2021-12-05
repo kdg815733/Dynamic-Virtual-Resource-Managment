@@ -29,6 +29,8 @@ public class DVRM
             System.out.println(" 3. start instance 4. available regions ");
             System.out.println(" 5. stop instance 6. create instance ");
             System.out.println(" 7. reboot instance 8. list images ");
+            System.out.println(" 9. start monitor 10. view costs ");
+            System.out.println(" 11. stop monitor ");
             System.out.println(" 99. quit ");
             System.out.println("------------------------------------------------------------");
 
@@ -64,12 +66,23 @@ public class DVRM
                 case 8:
                     aws.listImages();
                     break;
+                case 9:
+                    System.out.print("Enter instance id: ");
+                    aws.monitorInstances(id_string.nextLine());
+                    break;
+                case 10:
+                    aws.getCost();
+                    break;
+                case 11:
+                    System.out.print("Enter instance id: ");
+                    aws.unmonitorInstances(id_string.nextLine());
+                    break;
                 case 99:
                     menu.close();
                     id_string.close();
                     return;
                 default:
-                    System.out.println("\n잘못된 입력입니다.");
+                    System.out.println("\nWrong Input.");
                     break;
             }
             

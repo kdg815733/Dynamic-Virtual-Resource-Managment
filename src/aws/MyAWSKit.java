@@ -8,6 +8,7 @@ import com.amazonaws.services.ec2.model.RunInstancesRequest;
 import com.amazonaws.services.ec2.model.RunInstancesResult;
 import com.amazonaws.services.ec2.model.StartInstancesRequest;
 import com.amazonaws.services.ec2.model.StopInstancesRequest;
+import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
 import com.amazonaws.services.ec2.model.DescribeRegionsResult;
 import com.amazonaws.services.ec2.model.Image;
 import com.amazonaws.services.ec2.model.Region;
@@ -21,10 +22,26 @@ import com.amazonaws.services.ec2.model.Instance;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.ec2.model.Reservation;
+import com.amazonaws.services.costexplorer.model.DateInterval;
+import com.amazonaws.services.costexplorer.model.Dimension;
+import com.amazonaws.services.costexplorer.model.DimensionValues;
+import com.amazonaws.services.costexplorer.model.Expression;
+import com.amazonaws.services.costexplorer.model.GetCostAndUsageRequest;
+import com.amazonaws.services.costexplorer.model.GetCostAndUsageResult;
+import com.amazonaws.services.costexplorer.model.Granularity;
+import com.amazonaws.services.costexplorer.model.GroupDefinition;
+import com.amazonaws.services.dlm.AmazonDLMAsyncClientBuilder;
+import com.amazonaws.services.ec2.model.MonitorInstancesRequest;
+import com.amazonaws.services.costexplorer.AWSCostExplorer;
+import com.amazonaws.services.costexplorer.AWSCostExplorerClientBuilder;
+import com.amazonaws.auth.BasicSessionCredentials;
+
 
 public class MyAWSKit 
     {
         static AmazonEC2 ec2;
+        static AWSCostExplorer ce;
+        static ProfileCredentialsProvider credentialsProvider;
         MyAWSKit() throws Exception{
             init();
         }
@@ -36,7 +53,7 @@ public class MyAWSKit
         * credential profile by reading from the credentials file located at
         * (~/.aws/credentials).
         */
-           ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
+           credentialsProvider = new ProfileCredentialsProvider();
            try 
             {
                 credentialsProvider.getCredentials();
@@ -51,6 +68,9 @@ public class MyAWSKit
             ec2 = AmazonEC2ClientBuilder.standard()
             .withCredentials(credentialsProvider)
             .withRegion("us-east-2") /* check the region at AWS console */
+            .build();
+            ce = AWSCostExplorerClientBuilder.standard()
+            .withCredentials(credentialsProvider)
             .build();
         }
         public void listInstances()
@@ -103,7 +123,6 @@ public class MyAWSKit
                 .withInstanceIds(instanceId);
 
             ec2.stopInstances(request);
-
         }
 
         public void rebootInstance(String instanceId)
@@ -111,8 +130,7 @@ public class MyAWSKit
             RebootInstancesRequest request = new RebootInstancesRequest()
                 .withInstanceIds(instanceId);
 
-            RebootInstancesResult response = ec2.rebootInstances(request);
-
+            ec2.rebootInstances(request);
         }
 
         public void availableZones()
@@ -180,5 +198,37 @@ public class MyAWSKit
                     image.getOwnerId());
             }
 
+        }
+
+        public void getCost()
+        {
+            Expression expression = new Expression();
+            DimensionValues dimensions = new DimensionValues();
+            dimensions.withKey(Dimension.SERVICE);
+            dimensions.withValues("EC2 - Other");
+            expression.withDimensions(dimensions);
+            GetCostAndUsageRequest request = new GetCostAndUsageRequest()
+                .withTimePeriod(new DateInterval().withStart("2021-11-01").withEnd("2021-12-05"))
+                .withGranularity(Granularity.MONTHLY)
+                .withMetrics("BLENDED_COST")
+                .withFilter(expression);
+
+            GetCostAndUsageResult result = ce.getCostAndUsage(request); 
+            System.out.println(result);
+        }
+
+        public void monitorInstances(String instanceId)
+        {
+            MonitorInstancesRequest request = new MonitorInstancesRequest()
+                .withInstanceIds(instanceId);
+
+            ec2.monitorInstances(request);
+        }
+        public void unmonitorInstances(String instanceId)
+        {
+            UnmonitorInstancesRequest request = new UnmonitorInstancesRequest()
+                .withInstanceIds(instanceId);
+
+            ec2.unmonitorInstances(request);
         }
     }
